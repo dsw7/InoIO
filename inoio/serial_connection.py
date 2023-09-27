@@ -78,7 +78,7 @@ class InoIO:
     def disconnect(self) -> None:
         """Disconnect from device."""
 
-        if self.device is None:
+        if not hasattr(self, "device"):
             return
 
         if self.device.is_open:
@@ -93,7 +93,7 @@ class InoIO:
         :raises InoIOTransmissionError: If message could not be sent.
         """
 
-        if self.device is None:
+        if not hasattr(self, "device"):
             raise errors.InoIOTransmissionError(
                 "Cannot send message. No connection is open"
             )
@@ -130,7 +130,7 @@ class InoIO:
         :raises InoIOTransmissionError: If message could not be read.
         """
 
-        if self.device is None:
+        if not hasattr(self, "device"):
             raise errors.InoIOTransmissionError(
                 "Cannot read from device. No connection is open"
             )
