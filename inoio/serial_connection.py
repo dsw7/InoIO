@@ -1,6 +1,4 @@
-from logging import getLogger
 from time import sleep
-from typing import Tuple
 import serial
 from inoio import errors
 
@@ -15,8 +13,6 @@ class InoIO:
         (i.e. "/dev/ttyS2" on Linux).
     """
 
-    logger = getLogger("inoio")
-
     def __init__(
         self,
         baudrate: int = 9600,
@@ -28,7 +24,7 @@ class InoIO:
         self.port = port
         self.timeout = timeout
 
-        self.serial_port_obj: serial.Serial
+        self.device: serial.Serial
 
     def init_app(
         self,
@@ -57,7 +53,7 @@ class InoIO:
         """
 
         try:
-            self.serial_port_obj = serial.Serial(
+            self.device = serial.Serial(
                 baudrate=self.baudrate,
                 port=self.port,
                 timeout=self.timeout,
@@ -72,62 +68,90 @@ class InoIO:
                 f"Could not connect on {self.port}"
             ) from e
 
-        if not self.serial_port_obj.is_open:
+        if not self.device.is_open:
             raise errors.InoIOConnectionError(f"No connection is open on {self.port}")
 
         # Opening a connection will send a DTR (Data Terminal Ready) signal to device, which will
         # force the device to reset. Give device 2 seconds to reset
-
-        self.logger.debug(
-            "DTR (Data Terminal Ready) was sent. Waiting for device to reset"
-        )
         sleep(2)
-
-        self.logger.debug("Device ready to accept input on %s", self.port)
 
     def disconnect(self) -> None:
         """Disconnect from device."""
 
-        if self.serial_port_obj is None:
-            self.logger.debug("Not closing connection. Connection was never opened!")
+        if self.device is None:
             return
 
-        self.logger.debug("Closing connection!")
+        if self.device.is_open:
+            self.device.close()
 
-        if self.serial_port_obj.is_open:
-            self.serial_port_obj.close()
+    def write(self, message: str) -> int:
+        """Send a message to device.
 
-    def send_message(self, message: str) -> None:
-        self.logger.debug('Sending message: "%s"', message)
+        :param str, message: Specify the message to be sent.
+        :returns: The number of bytes written.
+        :rtype: int
+        :raises InoIOTransmissionError: If message could not be sent.
+        """
+
+        if self.device is None:
+            raise errors.InoIOTransmissionError(
+                "Cannot send message. No connection is open"
+            )
+
+        if not self.device.is_open:
+            raise errors.InoIOTransmissionError(
+                "Cannot send message. No connection is open"
+            )
+
+        if not isinstance(message, str):
+            raise errors.InoIOTransmissionError(
+                "Cannot send message. Message is not of 'str' type"
+            )
+
         message_encoded = message.encode(encoding=self.encoding)
 
-        self.logger.debug("Sent %i bytes", self.serial_port_obj.write(message_encoded))
-        self.serial_port_obj.flush()
+        try:
+            bytes_written = self.device.write(message_encoded)
+        except Exception as e:
+            raise errors.InoIOTransmissionError("Failed to write to device") from e
 
-    def receive_message(self) -> Tuple[bool, str]:
-        self.logger.debug("Waiting to receive message...")
+        try:
+            self.device.flush()
+        except Exception as e:
+            raise errors.InoIOTransmissionError("Failed to write to device") from e
+
+        return bytes_written
+
+    def read(self) -> str:
+        """Read a message from device.
+
+        :returns: The message that was read from device.
+        :rtype: str
+        :raises InoIOTransmissionError: If message could not be read.
+        """
+
+        if self.device is None:
+            raise errors.InoIOTransmissionError(
+                "Cannot read from device. No connection is open"
+            )
+
+        if not self.device.is_open:
+            raise errors.InoIOTransmissionError(
+                "Cannot read from device. No connection is open"
+            )
+
         message_received = False
 
         while not message_received:
-            while self.serial_port_obj.in_waiting < 1:
+            while self.device.in_waiting < 1:
                 pass
 
-            bytes_from_dev = (
-                self.serial_port_obj.read_until()
-            )  # Reads until \n by default
+            bytes_from_dev = self.device.read_until()  # Reads until \n by default
             message_received = True
 
-        if len(bytes_from_dev) > 80:
-            self.logger.debug("Received message: %s...", bytes_from_dev[:80])
-            self.logger.debug("Message was truncated due to excessive length")
-        else:
-            self.logger.debug("Received message: %s", bytes_from_dev)
-
         try:
-            results = bytes_from_dev.decode(self.encoding).strip()
+            message = bytes_from_dev.decode(self.encoding).strip()
         except UnicodeDecodeError as e:
-            return False, f'An exception occurred when decoding results: "{e}"'
+            raise errors.InoIOTransmissionError("Failed to decode data") from e
 
-        status, message = results.split(";")
-
-        return int(status) == 1, message
+        return message
