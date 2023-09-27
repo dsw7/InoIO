@@ -17,7 +17,7 @@ def compile_source(port: str) -> None:
         f"--fqbn={FULLY_QUALIFIED_BOARD_NAME}",
         f"--build-path={BUILD_DIR}",
         f"--build-cache-path={CACHE_DIR}",
-        "test",
+        "tests",
     ]
 
     try:
@@ -34,7 +34,7 @@ def upload_source(port: str) -> None:
         f"--port={port}",
         f"--fqbn={FULLY_QUALIFIED_BOARD_NAME}",
         f"--input-dir={BUILD_DIR}",
-        "test",
+        "tests",
     ]
 
     try:
