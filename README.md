@@ -1,8 +1,9 @@
 # InoIO
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-A small library for RX/TX with Arduino devices. This library assumes that the "backend" is running driver code somewhat akin to:
-```c++
+A small library for RX/TX with Arduino devices. This library assumes that the "backend" is running driver code
+somewhat akin to:
+```C++
 void setup()
 {
     unsigned int baud_rate = 9600;
