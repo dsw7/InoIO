@@ -25,4 +25,4 @@ def test_connect_disconnect_read(pytestconfig) -> None:
     with raises(errors.InoIOTransmissionError) as excinfo:
         conn.read()
 
-    assert "Cannot read message. No connection is open" in str(excinfo)
+    assert "Cannot read from device. No connection is open" in str(excinfo)
