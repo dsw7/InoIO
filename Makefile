@@ -51,6 +51,6 @@ black:
 mypy:
 	@mypy --cache-dir=/tmp/mypy_cache_inoio inoio tests
 
-test:
+test: setup
 	@python3 tests/upload.py COM3
 	@python3 -m pytest -vs tests --port=/dev/ttyS2

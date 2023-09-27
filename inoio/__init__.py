@@ -1,1 +1,1 @@
-from inoio.serial_connection import InoIO
+from inoio.serial_connection import InoIO, errors
