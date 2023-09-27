@@ -22,7 +22,7 @@ class InoIO:
 
         self.serial_port_obj: serial.Serial
 
-    def connect_to_device(self) -> None:
+    def connect(self) -> None:
         try:
             self.serial_port_obj = serial.Serial(
                 baudrate=self.baudrate,
@@ -50,7 +50,7 @@ class InoIO:
 
         self.logger.debug("Device ready to accept instructions!")
 
-    def disconnect_from_device(self) -> None:
+    def disconnect(self) -> None:
         if self.serial_port_obj is None:
             self.logger.debug("Not closing connection. Connection was never opened!")
             return
