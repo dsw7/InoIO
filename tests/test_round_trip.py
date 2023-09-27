@@ -17,8 +17,10 @@ def generate_random_string(num_strings: int, len_strings: int) -> list[str]:
 
 
 @fixture(scope="module")
-def connection() -> Generator[InoIO, None, None]:
-    conn = InoIO(port="/dev/ttyS2")
+def connection(pytestconfig) -> Generator[InoIO, None, None]:
+    port = pytestconfig.getoption("port")
+
+    conn = InoIO(port=port)
     conn.connect()
 
     yield conn

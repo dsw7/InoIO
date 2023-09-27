@@ -53,4 +53,4 @@ mypy:
 
 test:
 	@python3 tests/upload.py COM3
-	@python3 -m pytest -vs tests
+	@python3 -m pytest -vs tests --port=/dev/ttyS2
