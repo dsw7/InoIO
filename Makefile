@@ -1,4 +1,4 @@
-.PHONY = help wheel setup pypi test-pypi clean black mypy
+.PHONY = help wheel setup pypi test-pypi clean black mypy test
 .DEFAULT_GOAL = help
 
 define HELP_LIST_TARGETS
@@ -17,6 +17,8 @@ define HELP_LIST_TARGETS
         $$ make black
     To run mypy over Python code
         $$ make mypy
+    To run unit tests
+        $$ make test
 
 endef
 
@@ -48,3 +50,6 @@ black:
 
 mypy:
 	@mypy --cache-dir=/tmp/mypy_cache_inoio inoio
+
+test: setup
+	@python3 -m pytest -vs test
