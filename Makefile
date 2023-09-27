@@ -46,10 +46,10 @@ clean:
 	@rm -rfv dist/ *.egg-info/
 
 black:
-	@black inoio
+	@black inoio test
 
 mypy:
-	@mypy --cache-dir=/tmp/mypy_cache_inoio inoio
+	@mypy --cache-dir=/tmp/mypy_cache_inoio inoio test
 
 test: setup
 	@python3 -m pytest -vs test
