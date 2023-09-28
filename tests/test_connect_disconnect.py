@@ -73,8 +73,8 @@ def test_invalid_timeout_init_app() -> None:
 
 def test_connect_disconnect(pytestconfig) -> None:
     port = pytestconfig.getoption("port")
-
     conn = InoIO(port=port)
+
     conn.connect()
     conn.write("foobar")
 
@@ -101,5 +101,11 @@ def test_multiple_connect(pytestconfig) -> None:
 
     conn = InoIO(port=port)
     conn.connect()
-    conn.connect()
+
+    with raises(errors.InoIOConnectionError) as excinfo:
+        conn.connect()
+
+    assert f"A connection already exists on {port}" in str(excinfo)
+    assert conn.is_connected
+
     conn.disconnect()

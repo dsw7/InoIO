@@ -54,6 +54,11 @@ class InoIO:
         :raise InoIOConnectionError: If a connection could not be established.
         """
 
+        if self.is_connected:
+            raise errors.InoIOConnectionError(
+                f"A connection already exists on {self.device.name}"
+            )
+
         try:
             self.device = serial.Serial(
                 baudrate=self.baudrate,
