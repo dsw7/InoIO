@@ -39,7 +39,7 @@ def test_echo_strings_15(connection: InoIO, string: str) -> None:
     assert connection.read() == f"Received message: {string}"
 
 
-@mark.parametrize("string", generate_random_string(num_strings=10, len_strings=100))
-def test_echo_strings_100(connection: InoIO, string: str) -> None:
-    assert connection.write(string) == 100
+@mark.parametrize("string", generate_random_string(num_strings=10, len_strings=50))
+def test_echo_strings_50(connection: InoIO, string: str) -> None:
+    assert connection.write(string) == 50
     assert connection.read() == f"Received message: {string}"

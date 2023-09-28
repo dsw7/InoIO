@@ -8,7 +8,7 @@ class InoIO:
     """Class for interfacing with an Arduino device.
 
     :param int, optional baudrate: Specify the baud rate.
-    :param float, optional timeout: Specify the read timeout in sections.
+    :param float, optional timeout: Specify the read and write timeout in seconds.
     :param str, optional port: Specify the device name (i.e. "COM3" on Windows) or path to device
         (i.e. "/dev/ttyS2" on Linux).
     """
@@ -39,7 +39,7 @@ class InoIO:
         for example. For more information, see https://flask.palletsprojects.com/en/2.3.x/extensions/
 
         :param int, optional baudrate: Specify the baud rate.
-        :param float, optional timeout: Specify the read timeout in sections.
+        :param float, optional timeout: Specify the read and write timeout in seconds.
         :param str, optional port: Specify the device name (i.e. "COM3" on Windows) or path to device
             (i.e. "/dev/ttyS2" on Linux).
         """
@@ -64,6 +64,7 @@ class InoIO:
                 baudrate=self.baudrate,
                 port=self.port,
                 timeout=self.timeout,
+                write_timeout=self.timeout,
                 # Defaults used by Serial.begin()
                 # See www.arduino.cc/reference/en/language/functions/communication/serial/begin/
                 bytesize=serial.EIGHTBITS,
