@@ -96,7 +96,7 @@ def test_disconnect_without_connect(pytestconfig) -> None:
     conn.disconnect()
 
 
-def test_multiple_connect(pytestconfig) -> None:
+def test_multiple_connects(pytestconfig) -> None:
     port = pytestconfig.getoption("port")
 
     conn = InoIO(port=port)
@@ -109,3 +109,19 @@ def test_multiple_connect(pytestconfig) -> None:
     assert conn.is_connected
 
     conn.disconnect()
+
+
+def test_multiple_instances(pytestconfig) -> None:
+    port = pytestconfig.getoption("port")
+
+    conn1 = InoIO(port=port)
+    conn2 = InoIO(port=port)
+    conn1.connect()
+
+    with raises(errors.InoIOConnectionError) as excinfo:
+        conn2.connect()
+
+    assert f"Could not connect on {port}" in str(excinfo)
+
+    conn1.disconnect()
+    conn2.disconnect()
