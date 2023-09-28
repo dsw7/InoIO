@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "inoio"
-version = "1.0"
+version = "0.1.0"
 authors = [{name="David Weber"}]
 description = "Utilities for RX/TX with Arduino devices"
 readme = "README.md"

@@ -4,7 +4,14 @@
 A small library for RX/TX with Arduino devices.
 
 ## Table of Contents
+- [Installation](#installation)
 - [Example](#example)
+
+## Installation
+To install the library, simply run:
+```
+pip install inoio
+```
 
 ## Example
 The following snippet demonstrates how to use the library:
