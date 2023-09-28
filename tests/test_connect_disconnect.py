@@ -9,6 +9,7 @@ def test_invalid_port() -> None:
         conn.connect()
 
     conn.disconnect()
+    assert not conn.is_connected
     assert "One or more parameters is of invalid type" in str(excinfo)
 
 
@@ -19,6 +20,7 @@ def test_invalid_baudrate() -> None:
         conn.connect()
 
     conn.disconnect()
+    assert not conn.is_connected
     assert "One or more parameters is of invalid type" in str(excinfo)
 
 
@@ -29,6 +31,7 @@ def test_invalid_timeout() -> None:
         conn.connect()
 
     conn.disconnect()
+    assert not conn.is_connected
     assert "One or more parameters is of invalid type" in str(excinfo)
 
 
@@ -40,6 +43,7 @@ def test_invalid_port_init_app() -> None:
         conn.connect()
 
     conn.disconnect()
+    assert not conn.is_connected
     assert "One or more parameters is of invalid type" in str(excinfo)
 
 
@@ -51,6 +55,7 @@ def test_invalid_baudrate_init_app() -> None:
         conn.connect()
 
     conn.disconnect()
+    assert not conn.is_connected
     assert "One or more parameters is of invalid type" in str(excinfo)
 
 
@@ -62,6 +67,7 @@ def test_invalid_timeout_init_app() -> None:
         conn.connect()
 
     conn.disconnect()
+    assert not conn.is_connected
     assert "One or more parameters is of invalid type" in str(excinfo)
 
 
@@ -72,20 +78,20 @@ def test_connect_disconnect(pytestconfig) -> None:
     conn.connect()
     conn.write("foobar")
 
-    assert conn.device.is_open
+    assert conn.is_connected
 
     conn.disconnect()
-    assert not conn.device.is_open
+    assert not conn.is_connected
 
     conn.disconnect()
-    assert not conn.device.is_open
+    assert not conn.is_connected
 
 
 def test_disconnect_without_connect(pytestconfig) -> None:
     port = pytestconfig.getoption("port")
 
     conn = InoIO(port=port)
-    assert not hasattr(conn, "device")
+    assert not conn.is_connected
 
     conn.disconnect()
 

@@ -13,6 +13,8 @@ class InoIO:
         (i.e. "/dev/ttyS2" on Linux).
     """
 
+    is_connected = False
+
     def __init__(
         self,
         baudrate: int = 9600,
@@ -79,14 +81,14 @@ class InoIO:
         # force the device to reset. Give device 2 seconds to reset
         sleep(2)
 
+        self.is_connected = True
+
     def disconnect(self) -> None:
         """Disconnect from device."""
 
-        if not hasattr(self, "device"):
-            return
-
-        if self.device.is_open:
+        if self.is_connected:
             self.device.close()
+            self.is_connected = False
 
     def write(self, message: str) -> int:
         """Send a message to device.
@@ -97,12 +99,7 @@ class InoIO:
         :raises InoIOTransmissionError: If message could not be sent.
         """
 
-        if not hasattr(self, "device"):
-            raise errors.InoIOTransmissionError(
-                "Cannot send message. No connection is open"
-            )
-
-        if not self.device.is_open:
+        if not self.is_connected:
             raise errors.InoIOTransmissionError(
                 "Cannot send message. No connection is open"
             )
@@ -134,12 +131,7 @@ class InoIO:
         :raises InoIOTransmissionError: If message could not be read.
         """
 
-        if not hasattr(self, "device"):
-            raise errors.InoIOTransmissionError(
-                "Cannot read from device. No connection is open"
-            )
-
-        if not self.device.is_open:
+        if not self.is_connected:
             raise errors.InoIOTransmissionError(
                 "Cannot read from device. No connection is open"
             )
