@@ -63,6 +63,10 @@ class InoIO:
                 parity=serial.PARITY_NONE,
                 stopbits=serial.STOPBITS_ONE,
             )
+        except ValueError as e:
+            raise errors.InoIOConnectionError(
+                "One or more parameters is of invalid type"
+            ) from e
         except serial.serialutil.SerialException as e:
             raise errors.InoIOConnectionError(
                 f"Could not connect on {self.port}"
