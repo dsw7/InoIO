@@ -63,3 +63,37 @@ def test_invalid_timeout_init_app() -> None:
 
     conn.disconnect()
     assert "One or more parameters is of invalid type" in str(excinfo)
+
+
+def test_connect_disconnect(pytestconfig) -> None:
+    port = pytestconfig.getoption("port")
+
+    conn = InoIO(port=port)
+    conn.connect()
+    conn.write("foobar")
+
+    assert conn.device.is_open
+
+    conn.disconnect()
+    assert not conn.device.is_open
+
+    conn.disconnect()
+    assert not conn.device.is_open
+
+
+def test_disconnect_without_connect(pytestconfig) -> None:
+    port = pytestconfig.getoption("port")
+
+    conn = InoIO(port=port)
+    assert not hasattr(conn, "device")
+
+    conn.disconnect()
+
+
+def test_multiple_connect(pytestconfig) -> None:
+    port = pytestconfig.getoption("port")
+
+    conn = InoIO(port=port)
+    conn.connect()
+    conn.connect()
+    conn.disconnect()
