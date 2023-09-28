@@ -38,7 +38,7 @@ pypi: wheel
 	@pip3 install --upgrade twine
 	@python3 -m twine upload dist/*
 
-test-pypi:
+test-pypi: wheel
 	@pip3 install --upgrade twine
 	@python3 -m twine upload --repository testpypi dist/*
 
