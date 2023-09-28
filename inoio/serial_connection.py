@@ -28,9 +28,9 @@ class InoIO:
 
     def init_app(
         self,
-        baudrate: int,
-        port: str,
-        timeout: float,
+        baudrate: int = 9600,
+        port: str = "/dev/ttyS2",
+        timeout: float = 5.00,
     ) -> None:
         """Override parameters specified via class constructor. This method is useful
         for setting connection parameters if the InoIO class is being used as a Flask extension,
