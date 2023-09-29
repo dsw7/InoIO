@@ -9,8 +9,7 @@ class InoIO:
 
     :param int, optional baudrate: Specify the baud rate.
     :param float, optional timeout: Specify the read and write timeout in seconds.
-    :param str, optional port: Specify the device name (i.e. "COM3" on Windows) or path to device
-        (i.e. "/dev/ttyS2" on Linux).
+    :param str, optional port: Specify the device name.
     """
 
     is_connected = False
@@ -40,8 +39,7 @@ class InoIO:
 
         :param int, optional baudrate: Specify the baud rate.
         :param float, optional timeout: Specify the read and write timeout in seconds.
-        :param str, optional port: Specify the device name (i.e. "COM3" on Windows) or path to device
-            (i.e. "/dev/ttyS2" on Linux).
+        :param str, optional port: Specify the device name.
         """
 
         self.baudrate = baudrate
@@ -60,6 +58,7 @@ class InoIO:
             )
 
         try:
+            # See pyserial.readthedocs.io/en/latest/pyserial_api.html#serial.Serial
             self.device = serial.Serial(
                 baudrate=self.baudrate,
                 port=self.port,
@@ -93,6 +92,7 @@ class InoIO:
         """Disconnect from device."""
 
         if self.is_connected:
+            # See pyserial.readthedocs.io/en/latest/pyserial_api.html#serial.Serial.close
             self.device.close()
             self.is_connected = False
 
@@ -118,14 +118,13 @@ class InoIO:
         message_encoded = message.encode(encoding=self.encoding)
 
         try:
+            # See pyserial.readthedocs.io/en/latest/pyserial_api.html#serial.Serial.write
             bytes_written = self.device.write(message_encoded)
-        except Exception as e:
+        except serial.serialutil.SerialTimeoutException as e:
             raise errors.InoIOTransmissionError("Failed to write to device") from e
 
-        try:
-            self.device.flush()
-        except Exception as e:
-            raise errors.InoIOTransmissionError("Failed to write to device") from e
+        # See pyserial.readthedocs.io/en/latest/pyserial_api.html#serial.Serial.flush
+        self.device.flush()
 
         return bytes_written
 
@@ -148,7 +147,8 @@ class InoIO:
             while self.device.in_waiting < 1:
                 pass
 
-            bytes_from_dev = self.device.read_until()  # Reads until \n by default
+            # See pyserial.readthedocs.io/en/latest/pyserial_api.html#serial.Serial.read_until
+            bytes_from_dev = self.device.read_until()
             message_received = True
 
         try:
