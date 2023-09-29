@@ -157,3 +157,19 @@ class InoIO:
             raise errors.InoIOTransmissionError("Failed to decode data") from e
 
         return message
+
+    def num_bytes_input_buffer(self) -> int:
+        """Get number of bytes in input buffer.
+
+        :returns: The number of bytes in the input buffer.
+        :rtype: int
+        :raises InoIOConnectionError: If no device is connected.
+        """
+
+        if not self.is_connected:
+            raise errors.InoIOConnectionError(
+                "Cannot determine number of bytes in input buffer. No connection is open"
+            )
+
+        # See pyserial.readthedocs.io/en/latest/pyserial_api.html#serial.Serial.in_waiting
+        return self.device.in_waiting
