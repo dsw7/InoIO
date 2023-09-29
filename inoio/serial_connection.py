@@ -149,13 +149,19 @@ class InoIO:
 
         message_received = False
 
-        while not message_received:
-            while self.device.in_waiting < 1:
-                pass
+        try:
+            while not message_received:
+                while self.device.in_waiting < 1:
+                    pass
 
-            # See pyserial.readthedocs.io/en/latest/pyserial_api.html#serial.Serial.read_until
-            bytes_from_dev = self.device.read_until()
-            message_received = True
+                # See pyserial.readthedocs.io/en/latest/pyserial_api.html#serial.Serial.read_until
+                bytes_from_dev = self.device.read_until()
+                message_received = True
+
+        except PermissionError as e:
+            raise errors.InoIOTransmissionError(
+                "Failed to read from device. Device may have disconnected!"
+            ) from e
 
         try:
             message = bytes_from_dev.decode(self.encoding).strip()
