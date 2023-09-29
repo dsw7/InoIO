@@ -52,6 +52,6 @@ mypy:
 	@mypy --cache-dir=/tmp/mypy_cache_inoio inoio tests
 
 test: setup
-	@python3 tests/upload.py COM3
+	@python3 tests/upload.py /dev/ttyUSB0
 	@pip3 install --upgrade pytest
-	@python3 -m pytest -vs tests --port=/dev/ttyS2
+	@python3 -m pytest -vs tests --port=/dev/ttyUSB0
