@@ -120,8 +120,14 @@ class InoIO:
         try:
             # See pyserial.readthedocs.io/en/latest/pyserial_api.html#serial.Serial.write
             bytes_written = self.device.write(message_encoded)
+        except serial.serialutil.SerialException as e:
+            raise errors.InoIOTransmissionError(
+                "Failed to write to device. Device may have disconnected!"
+            ) from e
         except serial.serialutil.SerialTimeoutException as e:
-            raise errors.InoIOTransmissionError("Failed to write to device") from e
+            raise errors.InoIOTransmissionError(
+                "Failed to write to device. Timeout!"
+            ) from e
 
         # See pyserial.readthedocs.io/en/latest/pyserial_api.html#serial.Serial.flush
         self.device.flush()
